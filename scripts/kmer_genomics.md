@@ -34,5 +34,17 @@ multiqc --outdir ${DIR}_multiqc ./${DIR}_fastqc/
 
 </details>
 
+[MultiQC report](assets/raw_multiqc/multiqc_report.html)
 
 
+## Adapter removal
+
+<details>
+<sumary>Trim sequence adapters</summary>
+
+```
+
+
+```
+
+</details>
