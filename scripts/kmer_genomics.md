@@ -52,7 +52,7 @@ fastqc --outdir $FASTQC $TRIMDIR/${readpair}_trim_{R1..R2}.fastq.gz
 
 </details>
 
-[fastp QC report.](scripts/assets/Fetter_Orchid_lysed_S449_L003_fastp.html)
+[fastp QC report.](assets/Fetter_Orchid_lysed_S449_L003_fastp.html)
 
 You can also use `fastqc` and `multiqc` to make the QC reports.
 
@@ -88,7 +88,7 @@ multiqc --outdir ${DIR}_multiqc ./${DIR}_fastqc/
 
 </details>
 
-[MultiQC report](assets/raw_multiqc/multiqc_report.html)
+[MultiQC report](assets/multiqc_report.html)
 
 ## Kraken: Contaminant removal
 
