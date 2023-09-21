@@ -52,7 +52,7 @@ fastqc --outdir $FASTQC $TRIMDIR/${readpair}_trim_{R1..R2}.fastq.gz
 
 </details>
 
-[fastp QC report.](assets/Fetter_Orchid_lysed_S449_L003_fastp.html)
+[fastp QC report.](scripts/assets/Fetter_Orchid_lysed_S449_L003_fastp.html)
 
 You can also use `fastqc` and `multiqc` to make the QC reports.
 
