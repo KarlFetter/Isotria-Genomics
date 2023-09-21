@@ -1,75 +1,10 @@
 # Kmer Based Genomic Methods
 
-## Quality Control
-
-<details>
-<summary>QC the raw reads wih fastqc and multqc</summary>
-
-```
-echo `hostname`
-
-#################################################################
-# FASTQC of raw reads 
-#################################################################
-# create an output directory to hold fastqc output
-DIR="raw"
-mkdir -p ${DIR}_fastqc
-readDir=/core/projects/EBP/conservation/isotria/kmer_methods/01_raw_reads/GenomeKmer_Orchid_Sept2023
-
-
-module load fastqc/0.11.7
-
-readpair=Fetter_Orchid_lysed_S449_L003
-fastqc --threads 4 --outdir ./${DIR}_fastqc/ $readDir/${readpair}_R1_001.fastq.gz $readDir/${readpair}_R2_001.fastq.gz
-
-#################################################################
-# MULTIQC of raw reads 
-#################################################################
-module load MultiQC/1.9
-
-mkdir -p ${DIR}_multiqc
-multiqc --outdir ${DIR}_multiqc ./${DIR}_fastqc/
-
-```
-
-</details>
-
-[MultiQC report](assets/raw_multiqc/multiqc_report.html)
-
-
-## Adapter removal
-
-<details>
-<sumary>Trim sequence adapters</summary>
-
-```
-
-hostname
-date
-
-module load Trimmomatic/0.39
-
-readDir=/core/projects/EBP/conservation/isotria/kmer_methods/01_raw_reads/GenomeKmer_Orchid_Sept2023
-readpair=Fetter_Orchid_lysed_S449_L003
-
-SAM=K21
-java -jar $Trimmomatic PE -threads 4 \
-        $readDir/${readpair}_R1_001.fastq.gz \
-        $readDir/${readpair}_R2_001.fastq.gz \
-        trim_${readpair}_R1_001.fastq.gz singles_trim_${readpair}_R1.fastq.gz \
-        trim_${readpair}_R2_001.fastq.gz singles_trim_${readpair}_R2.fastq.gz \
-        ILLUMINACLIP:/isg/shared/apps/Trimmomatic/0.36/adapters/TruSeq3-PE-2.fa:2:30:10 \
-        SLIDINGWINDOW:4:25 \
-        MINLEN:45
-date
-
-```
-
-</details>
+## Quality Control & Adapter Removal
 
 <details>
 
-<summary>The reporting and trimming is better done with fastp. Use these files gong forward.</summary>
+<summary>Use fastp to evluae sequence quality and to trim adapter sequences.</summary>
 
 ```
 echo `hostname`
@@ -118,6 +53,43 @@ fastqc --outdir $FASTQC $TRIMDIR/${readpair}_trim_{R1..R2}.fastq.gz
 </details>
 
 
+You can also use `fastqc` and `multiqc` to make the QC reports.
+
+<details>
+<summary>To use fastqc/multiqc, click here.</summary>
+
+```
+echo `hostname`
+
+#################################################################
+# FASTQC of raw reads 
+#################################################################
+# create an output directory to hold fastqc output
+DIR="raw"
+mkdir -p ${DIR}_fastqc
+readDir=/core/projects/EBP/conservation/isotria/kmer_methods/01_raw_reads/GenomeKmer_Orchid_Sept2023
+
+
+module load fastqc/0.11.7
+
+readpair=Fetter_Orchid_lysed_S449_L003
+fastqc --threads 4 --outdir ./${DIR}_fastqc/ $readDir/${readpair}_R1_001.fastq.gz $readDir/${readpair}_R2_001.fastq.gz
+
+#################################################################
+# MULTIQC of raw reads 
+#################################################################
+module load MultiQC/1.9
+
+mkdir -p ${DIR}_multiqc
+multiqc --outdir ${DIR}_multiqc ./${DIR}_fastqc/
+
+```
+
+</details>
+
+[MultiQC report](assets/raw_multiqc/multiqc_report.html)
+
+## Kraken: Contaminant removal
 
 <details>
 <summary>Remove contaminants with kraken.</summary>
@@ -145,9 +117,8 @@ kraken2 -db /isg/shared/databases/kraken2/Standard \
 	--report $OUTDIR/${readpair}_kraken_report.txt \
 	--use-mpa-style 
 
-
-
 date
 ```
 
 </details>
+
