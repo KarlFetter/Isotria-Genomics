@@ -175,3 +175,28 @@ jellyfish count -t 30 -C -m 21 -s 100G -o 21mer_out $readDir/${readpair}_*.fastq
 ```
 
 </details>
+
+
+<details>
+<summary>Count the frequencis of the 21mers with Jellyfish</summary>
+
+```
+#!/bin/bash
+#SBATCH --job-name=kmerFreq
+#SBATCH -n 1
+#SBATCH -c 1 
+#SBATCH -N 1
+#SBATCH --partition=general
+#SBATCH --qos=general
+#SBATCH --mem=4G
+#SBATCH --output=R-%x.%j.out
+#SBATCH --error=R-%x.%j.err
+#SBATCH --mail-type=END
+#SBATCH --mail-user=kcf@uconn.edu
+
+module load jellyfish/2.2.6
+
+jellyfish histo -o 21mer_out.histo 21mer_out
+```
+
+</details>
