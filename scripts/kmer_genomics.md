@@ -145,7 +145,7 @@ awk '{ if ($2 ~ /contaminant_taxid/) print $1 }' Fetter_Orchid_lysed_S449_L003_t
 
 Use the unclassified reads, which should be cleaned of contaminants.
 
-## 
+## Jellyfish: Kmer Counting/Freq 
 
 
 <details>
