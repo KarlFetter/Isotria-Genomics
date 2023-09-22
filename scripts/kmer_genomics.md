@@ -1,6 +1,6 @@
 # Kmer Based Genomic Methods
 
-The raw reads and other large read files are moved to `/archive/labs/wegrzyn/genomes/orchids/` to save space on `/core/projects`. Sequences for a single pair of reads are available here. 
+The raw reads and other large read files are moved to `/archive/labs/wegrzyn/genomes/orchids/` to save space on `/core/projects`. Sequences for a single pair of reads are available here, but they are symlinked to their paths in `/core/projects/EBP/conservation/isotria`. 
 
 ```
 (base) bash-4.2$ ls -lht /archive/labs/wegrzyn/genomes/orchids/raw_reads/
