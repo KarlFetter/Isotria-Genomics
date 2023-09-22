@@ -1,5 +1,14 @@
 # Kmer Based Genomic Methods
 
+The raw reads and other large read files are moved to `/archive/labs/wegrzyn/genomes/orchids/` to save space on `/core/projects`. Sequences for a single pair of reads are available here. 
+
+```
+(base) bash-4.2$ ls -lht /archive/labs/wegrzyn/genomes/orchids/raw_reads/
+total 358G
+-rwxrwxrwx 1 kfetter wegrzynlab 184G Sep 11 10:41 Fetter_Orchid_lysed_S449_L003_R2_001.fastq.gz
+-rwxrwxrwx 1 kfetter wegrzynlab 175G Sep 11 10:41 Fetter_Orchid_lysed_S449_L003_R1_001.fastq.gz
+```
+
 ## Quality Control & Adapter Removal
 
 <details>
@@ -123,3 +132,46 @@ date
 
 </details>
 
+<details>
+<summary>Get a list of contaminated reads for removal.</summary>
+
+```
+cd 
+awk '{ if ($2 ~ /contaminant_taxid/) print $1 }' Fetter_Orchid_lysed_S449_L003_trim_kraken_general.out > contaminant_ids.txt
+
+```
+
+</details>
+
+Use the unclassified reads, which should be cleaned of contaminants.
+
+## 
+
+
+<details>
+<summary>Run the kmer counting script. Be mindful of the resources required here.</summary>
+
+```
+#!/bin/bash
+#SBATCH --job-name=kmerCount
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH -c 30 
+#SBATCH --partition=himem
+#SBATCH --qos=himem
+#SBATCH --mail-type=END
+#SBATCH --mem=375G
+#SBATCH --mail-user=kcf@uconn.edu
+#SBATCH -o %x_%j.out
+#SBATCH -e %x_%j.err
+
+
+module load jellyfish/2.2.6
+
+readDir=/core/projects/EBP/conservation/isotria/kmer_methods/02_quality_control/kraken
+readpair=Fetter_Orchid_lysed_S449_L003_trim_unclassified
+
+jellyfish count -t 30 -C -m 21 -s 100G -o 21mer_out $readDir/${readpair}_*.fastq
+```
+
+</details>
