@@ -145,7 +145,7 @@ awk '{ if ($2 ~ /contaminant_taxid/) print $1 }' Fetter_Orchid_lysed_S449_L003_t
 
 Use the unclassified reads, which should be cleaned of contaminants.
 
-## Jellyfish/Smudeplot: Kmer models to ploidy estimate
+## Jellyfish/Smudeplot: Kmer models for ploidy estimation
 
 <details>
 <summary>Run the kmer counting script (1kmer_count.sh). Be mindful of the resources required here, they are large.</summary>
@@ -248,9 +248,6 @@ singularity exec $smudgeplot smudgeplot.py plot kmer_pairs_L88_coverages.tsv -o 
   <img src="assets/isotria_smudgeplot_L88_smudgeplot.png" alt="Isotria Smudgeplot">
   <figcaption>Isotria smudgeplot indicating a diploid genome.</figcaption>
 </figure>
-
-![Isotria Smudgeplot](assets/isotria_smudgeplot_L88_smudgeplot.png)
-
 
 
 ## GenomeScope: Model k-mer spectrum
