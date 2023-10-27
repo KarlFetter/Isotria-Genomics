@@ -17,4 +17,7 @@ module load jellyfish/2.2.6
 readDir=/core/projects/EBP/conservation/isotria/kmer_methods/02_quality_control/kraken
 readpair=Fetter_Orchid_lysed_S449_L003_trim_unclassified
 
-jellyfish count -t 30 -C -m 21 -s 100G -o 21mer_out $readDir/${readpair}_*.fastq
+#jellyfish count -t 30 -C -m 21 -s 100G -o 21mer_out $readDir/${readpair}_*.fastq
+
+# Updated jf code from genomescope. 
+jellyfish count -C -m 21 -s 1000000000 -t 10 $readDir/${readpair}_*.fastq -o 21mer_out_reads.jf

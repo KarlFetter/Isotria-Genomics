@@ -145,11 +145,10 @@ awk '{ if ($2 ~ /contaminant_taxid/) print $1 }' Fetter_Orchid_lysed_S449_L003_t
 
 Use the unclassified reads, which should be cleaned of contaminants.
 
-## Jellyfish: Kmer Counting/Freq 
-
+## Jellyfish/Smudeplot: Kmer models to ploidy estimate
 
 <details>
-<summary>Run the kmer counting script. Be mindful of the resources required here.</summary>
+<summary>Run the kmer counting script (1kmer_count.sh). Be mindful of the resources required here, they are large.</summary>
 
 ```
 #!/bin/bash
@@ -157,46 +156,118 @@ Use the unclassified reads, which should be cleaned of contaminants.
 #SBATCH -N 1
 #SBATCH -n 1
 #SBATCH -c 30 
-#SBATCH --partition=himem
+#SBATCH --partition=himem2
 #SBATCH --qos=himem
 #SBATCH --mail-type=END
-#SBATCH --mem=375G
+#SBATCH --mem=475G
 #SBATCH --mail-user=kcf@uconn.edu
 #SBATCH -o %x_%j.out
 #SBATCH -e %x_%j.err
-
 
 module load jellyfish/2.2.6
 
 readDir=/core/projects/EBP/conservation/isotria/kmer_methods/02_quality_control/kraken
 readpair=Fetter_Orchid_lysed_S449_L003_trim_unclassified
 
-jellyfish count -t 30 -C -m 21 -s 100G -o 21mer_out $readDir/${readpair}_*.fastq
+jellyfish count -C -m 21 -s 1000000000 -t 10 $readDir/${readpair}_*.fastq -o 21mer_out_reads.jf
+```
+
+</details>
+
+<details>
+<summary>Make the histogram of the kmers (.histo) with 2kmer_freq.sh.</summary>
+
+```
+module load jellyfish/2.2.6
+
+jellyfish histo -t 10 21mer_out_reads.jf > 21mer_reads.histo
+```
+
+</details>
+
+<details>
+<summary>Create the upper and lower thresholds for the histogram (3kmer_threshold.sh).</summary>
+
+```
+module load singularity/3.7.1
+smudgeplot=/isg/shared/databases/nfx_singularity_cache/smudgeplot.sif
+
+singularity exec $smudgeplot smudgeplot.py cutoff 21mer_reads.histo L > cutoff_L.out
+singularity exec $smudgeplot smudgeplot.py cutoff 21mer_reads.histo U > cutoff_U.out
+
+# these need to be sane values like 30 800 or so
+```
+
+</details>
+
+<details>
+<summary>Run the smudgeplot.py on the 21mer_out_reads.jf. This step outputs the sequences.tsv and coverages.tsv of the 21mers. We are using a lower threshold of 88 here. (4kmer_extract_L88.sh)</summary>
+
+```
+#!/bin/bash
+#SBATCH --job-name=kmerExtractL88
+#SBATCH -n 1
+#SBATCH -c 10
+#SBATCH -N 1
+#SBATCH --partition=general
+#SBATCH --qos=general
+#SBATCH --mem=150G
+#SBATCH --output=R-%x.%j.out
+#SBATCH --error=R-%x.%j.err
+#SBATCH --mail-type=END
+#SBATCH --mail-user=kcf@uconn.edu
+
+module load singularity/3.7.1
+module load jellyfish/2.2.6
+
+smudgeplot=/isg/shared/databases/nfx_singularity_cache/smudgeplot.sif
+L=88
+U=1100
+
+jellyfish dump -c -L $L -U $U 21mer_out_reads.jf | singularity exec $smudgeplot smudgeplot.py hetkmers -o kmer_pairs_L88
+
 ```
 
 </details>
 
 
 <details>
-<summary>Count the frequencis of the 21mers with Jellyfish</summary>
+<summary>Make the smudgeplot to estimate ploidy level. (kmer_plot.sh)</summary>
 
 ```
-#!/bin/bash
-#SBATCH --job-name=kmerFreq
-#SBATCH -n 1
-#SBATCH -c 1 
-#SBATCH -N 1
-#SBATCH --partition=general
-#SBATCH --qos=general
-#SBATCH --mem=4G
-#SBATCH --output=R-%x.%j.out
-#SBATCH --error=R-%x.%j.err
-#SBATCH --mail-type=END
-#SBATCH --mail-user=kcf@uconn.edu
+module load singularity/3.7.1
 
-module load jellyfish/2.2.6
+smudgeplot=/isg/shared/databases/nfx_singularity_cache/smudgeplot.sif
 
-jellyfish histo -o 21mer_out.histo 21mer_out
+singularity exec $smudgeplot smudgeplot.py plot kmer_pairs_L88_coverages.tsv -o isotria_smudgeplot_L88
 ```
 
 </details>
+
+<figure>
+  ![Isotria Smudgeplot](/core/projects/EBP/conservation/isotria/Isotria_Genomics/scripts/assets/isotria_smudgeplot_L88_smudgeplot.png)
+  <figcaption>Isotria smudgeplot indicating a diploid genome.</figcaption>
+</figure>
+
+## GenomeScope: Model k-mer spectrum
+
+## Genome Coverage estimate
+
+```R
+read_count = 2498500000
+> read_length = 150
+> genome1 = 2000000000
+> genome1
+[1] 2e+09
+> genome2 = 50e9
+> genome2
+[1] 5e+10
+> coverage1 = (read_count * read_length) / genome1
+> coverage2 = (read_count * read_length) / genome2
+> coverage1
+[1] 187.3875
+> coverage2
+[1] 7.4955
+```
+
+
