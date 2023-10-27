@@ -244,14 +244,14 @@ singularity exec $smudgeplot smudgeplot.py plot kmer_pairs_L88_coverages.tsv -o 
 
 </details>
 
-<p>
-  <figure>
-    <a href="/core/projects/EBP/conservation/isotria/Isotria_Genomics/scripts/assets/isotria_smudgeplot_L88_smudgeplot.png">
-      ![Isotria Smudgeplot](/core/projects/EBP/conservation/isotria/Isotria_Genomics/scripts/assets/isotria_smudgeplot_L88_smudgeplot.png)
-    </a>
-    <figcaption>Isotria smudgeplot indicating a diploid genome.</figcaption>
-  </figure>
-</p>
+<figure>
+  <img src="assets/isotria_smudgeplot_L88_smudgeplot.png" alt="Isotria Smudgeplot">
+  <figcaption>Isotria smudgeplot indicating a diploid genome.</figcaption>
+</figure>
+
+![Isotria Smudgeplot](assets/isotria_smudgeplot_L88_smudgeplot.png)
+
+
 
 ## GenomeScope: Model k-mer spectrum
 
